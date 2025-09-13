@@ -1,3 +1,6 @@
+// following this tutorial for jwt:
+// https://mihai-andrei.com/blog/jwt-authentication-using-prisma-and-express/
+
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
@@ -7,6 +10,7 @@ const {
   createUser,
   findUserById,
   addRefreshTokenToWhitelist,
+  findUserByEmail,
 } = require("../prisma/queries");
 const { generateTokens } = require("../prisma/jwt");
 
@@ -46,6 +50,40 @@ router.get("/login", (req, res) => {
   res.render("login", {
     title: "Login",
   });
+});
+
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      res.status(400).send("You must provide a email and password");
+    }
+
+    const existingUser = await findUserByEmail(email);
+
+    if (!existingUser) {
+      res.status(403);
+      throw new Error("Invalid login credentials.");
+    }
+
+    const validPassword = await bcrypt.compare(password, existingUser.password);
+
+    if (!validPassword) {
+      res.status(403);
+      throw new Error("Invalid login credentials.");
+    }
+
+    const { accessToken, refreshToken } = generateTokens(existingUser);
+    await addRefreshTokenToWhitelist({ refreshToken, userId: existingUser.id });
+
+    res.json({
+      accessToken,
+      refreshToken,
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;

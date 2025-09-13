@@ -86,6 +86,7 @@ module.exports = {
   getAllUsers,
   createUser,
   findUserById,
+  findUserByEmail,
   addRefreshTokenToWhitelist,
   findRefreshToken,
   deleteRefreshTokenById,

@@ -1,6 +1,7 @@
 const express = require("express");
 require("dotenv").config();
 const app = express();
+const prisma = require("./prisma/client");
 
 //json web token
 const passport = require("passport");
@@ -15,17 +16,21 @@ opts.secretOrKey = process.env.JWT_ACCESS_SECRET;
 
 passport.use(
   new JwtStrategy(opts, async (jwt_payload, done) => {
-    User.findOne({ id: jwt_payload.sub }, function (err, user) {
-      if (err) {
-        return done(err, false);
-      }
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          id: jwt_payload.userId,
+        },
+      });
       if (user) {
         return done(null, user);
       } else {
         return done(null, false);
         // or you could create a new account
       }
-    });
+    } catch (err) {
+      return done(err, false);
+    }
   })
 );
 
@@ -33,6 +38,8 @@ app.use(express.json()); // parse JSON body
 app.use(express.urlencoded({ extended: true })); // parse form data
 
 const authRouter = require("./routes/authRouter");
+
+app.use(passport.initialize());
 
 //set view engine
 app.set("view engine", "ejs");
