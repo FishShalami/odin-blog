@@ -11,6 +11,8 @@ const {
   findUserById,
   addRefreshTokenToWhitelist,
   findUserByEmail,
+  findRefreshToken,
+  deleteRefreshTokenById,
 } = require("../prisma/queries");
 const { generateTokens } = require("../prisma/jwt");
 
@@ -80,6 +82,45 @@ router.post("/login", async (req, res) => {
     res.json({
       accessToken,
       refreshToken,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post("/refreshToken", async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) {
+      res.status(400);
+      throw new Error("Missing refresh token");
+    }
+    const savedRefreshToken = await findRefreshToken(refreshToken);
+
+    if (
+      !savedRefreshToken ||
+      savedRefreshToken.revoked === true ||
+      Date.now() >= savedRefreshToken.expireAt.getTime()
+    ) {
+      res.status(401);
+      throw new Error("Unauthorized");
+    }
+    const user = await findUserById(savedRefreshToken.userId);
+    if (!user) {
+      res.status(401);
+      throw new Error("Unauthorized");
+    }
+
+    await deleteRefreshTokenById(savedRefreshToken.id);
+    const { accessToken, refreshToken: newRefreshToken } = generateTokens(user);
+    await addRefreshTokenToWhitelist({
+      refreshToken: newRefreshToken,
+      userId: user.id,
+    });
+
+    res.json({
+      accessToken,
+      refreshToken: newRefreshToken,
     });
   } catch (err) {
     next(err);
