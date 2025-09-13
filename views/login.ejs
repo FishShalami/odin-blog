@@ -14,12 +14,13 @@
         <%= title %>
     </h1>
     <div class="login-form">
-        <form action="/login" method="post">
+        <form action="/auth/login" method="post">
             <label for="email">Email</label>
-            <input type="email" name="email" id="email">
+            <input type="email" name="email" id="email" required autofocus>
 
             <label for="password">Password</label>
-            <input type="password" name="password" id="password">
+            <input type="password" name="password" id="password" required>
+            <button type="submit">Login</button>
         </form>
     </div>
 </body>

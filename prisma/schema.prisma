@@ -29,7 +29,7 @@ model Comment {
   id         Int     @id @default(autoincrement())
   content    String?
   user       User    @relation(fields: [userId], references: [id])
-  userId     Int     @unique
+  userId     Int     
   createdAt  DateTime @default(now())
 }
 
@@ -40,6 +40,19 @@ model User {
   posts     Post[]
   comments  Comment[] 
   role      Role             @default(USER)
+  password  String
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id          Int   @id @default(autoincrement())
+  hashedToken String   @unique
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revoked     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  expireAt    DateTime
 }
 
 enum Role {
