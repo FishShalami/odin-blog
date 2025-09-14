@@ -57,12 +57,16 @@ app.get("/", async (req, res) => {
 
 app.use("/api/auth", authRouter);
 
-app.get("/dashboard", authenticateWithRefresh, (req, res) => {
-  res.render("dashboard", {
-    title: "Dashboard",
+app.get("/api/me", authenticateWithRefresh, (req, res) => {
+  res.json({
     email: req.user.email,
     id: req.user.id,
   });
+});
+
+app.use((err, req, res, next) => {
+  const status = res.statusCode >= 400 ? res.statusCode : 500;
+  res.status(status).json({ error: err.message || "Server error" });
 });
 
 app.listen(3000, () => {
