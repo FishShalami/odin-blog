@@ -3,6 +3,7 @@ require("dotenv").config();
 const app = express();
 const prisma = require("./prisma/client");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 //json web token
 const passport = require("passport");
@@ -42,14 +43,11 @@ const { authenticateWithRefresh } = require("./prisma/refreshToken");
 app.use(express.json()); // parse JSON body
 app.use(express.urlencoded({ extended: true })); // parse form data
 app.use(cookieParser());
+app.use(cors({ origin: process.env.FRONTEND_ORIGIN, credentials: true }));
 
 const authRouter = require("./routes/authRouter");
 
 app.use(passport.initialize());
-
-//set view engine
-app.set("view engine", "ejs");
-app.set("views", "./views");
 
 app.get("/", async (req, res) => {
   res.send("Hello World");
@@ -57,7 +55,7 @@ app.get("/", async (req, res) => {
 
 //--- ROUTERS ---
 
-app.use("/auth", authRouter);
+app.use("/api/auth", authRouter);
 
 app.get("/dashboard", authenticateWithRefresh, (req, res) => {
   res.render("dashboard", {

@@ -4,6 +4,13 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
+const isProd = process.env.NODE_ENV === "production";
+const crossSite = process.env.CROSS_SITE_COOKIES === "true"; // set in .env when FE is on different origin
+const baseCookie = {
+  httpOnly: true,
+  sameSite: crossSite ? "none" : "lax",
+  secure: crossSite ? true : isProd,
+};
 
 const {
   getAllUsers,
@@ -17,35 +24,40 @@ const {
 const { generateTokens } = require("../prisma/jwt");
 
 //signup
-router.get("/signup", (req, res) => {
-  res.render("signup", {
-    title: "Sign-up",
-  });
-});
+// router.get("/signup", (req, res) => {
+//   res.render("signup", {
+//     title: "Sign-up",
+//   });
+// });
 
 router.post("/signup", async (req, res, next) => {
   try {
-    const { email, name, password } = req.body;
-    if (!email || !password) {
-      res.status(400).send("You must provide a email and password");
-    }
     //hash password with bcryptjs
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await createUser(email, name, hashedPassword);
-
-    return res.redirect("/auth/login");
+    const { accessToken, refreshToken } = generateTokens(user);
+    await addRefreshTokenToWhitelist({ refreshToken, userId: user.id });
+    res.cookie("accessToken", accessToken, {
+      ...baseCookie,
+      maxAge: 5 * 60 * 1000,
+    });
+    res.cookie("refreshToken", refreshToken, {
+      ...baseCookie,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+    return res.status(201).json({ id: user.id, email: user.email });
   } catch (err) {
-    res.status(500).send("Something went wrong");
+    res.status(500).json({ message: "Something went wrong" });
     next(err);
   }
 });
 
 //login
-router.get("/login", (req, res) => {
-  res.render("login", {
-    title: "Login",
-  });
-});
+// router.get("/login", (req, res) => {
+//   res.render("login", {
+//     title: "Login",
+//   });
+// });
 
 router.post("/login", async (req, res, next) => {
   try {
