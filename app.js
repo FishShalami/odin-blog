@@ -3,16 +3,20 @@ require("dotenv").config();
 const app = express();
 const prisma = require("./prisma/client");
 
+const cookieParser = require("cookie-parser");
+
 //json web token
 const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy,
   ExtractJwt = require("passport-jwt").ExtractJwt;
 
 var opts = {};
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+const cookieExtractor = (req) => {
+  if (req && req.cookies) return req.cookies.accessToken || null;
+  return null;
+};
+opts.jwtFromRequest = cookieExtractor;
 opts.secretOrKey = process.env.JWT_ACCESS_SECRET;
-// // opts.issuer = "accounts.examplesoft.com";
-// // opts.audience = "yoursite.net";
 
 passport.use(
   new JwtStrategy(opts, async (jwt_payload, done) => {
@@ -36,6 +40,7 @@ passport.use(
 
 app.use(express.json()); // parse JSON body
 app.use(express.urlencoded({ extended: true })); // parse form data
+app.use(cookieParser());
 
 const authRouter = require("./routes/authRouter");
 
@@ -52,6 +57,32 @@ app.get("/", async (req, res) => {
 //--- ROUTERS ---
 
 app.use("/auth", authRouter);
+
+app.get(
+  "/dashboard",
+  (req, res, next) => {
+    fetch("/protected", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+    });
+    passport.authenticate("jwt", { session: false }, (err, user, info) => {
+      if (err) return next(err);
+      if (!user) {
+        // info can carry reasons like token expired, no auth header, etc.
+        return res.status(401).json({
+          error: "Unauthorized",
+          detail: info?.message || info || "No user from token",
+        });
+      }
+      req.user = user; // attach for the handler
+      next();
+    })(req, res, next);
+  },
+  async (req, res) => {
+    res.send(`Hello Secret World, ${req.user.email || req.user.id}`);
+  }
+);
 
 app.listen(3000, () => {
   console.log("Server listening on 3000!");

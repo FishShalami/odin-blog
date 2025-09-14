@@ -33,14 +33,23 @@ router.post("/signup", async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await createUser(email, name, hashedPassword);
 
-    const { accessToken, refreshToken } = generateTokens(user);
-    await addRefreshTokenToWhitelist({ refreshToken, userId: user.id });
+    // const { accessToken, refreshToken } = generateTokens(user);
+    // await addRefreshTokenToWhitelist({ refreshToken, userId: user.id });
 
-    res.json({
-      accessToken,
-      refreshToken,
-    });
-    // res.redirect("/login");
+    // res.cookie("accessToken", accessToken, {
+    //   httpOnly: true,
+    //   sameSite: "lax",
+    //   secure: process.env.NODE_ENV === "production",
+    //   maxAge: 5 * 60 * 1000, //5 minutes
+    // });
+    // res.cookie("refreshToken", refreshToken, {
+    //   httpOnly: true,
+    //   sameSite: "lax",
+    //   secure: process.env.NODE_ENV === "production",
+    //   maxAge: 30*24*60*60*1000, //30 days
+    // });
+
+    return res.redirect("/login");
   } catch (err) {
     res.status(500).send("Something went wrong");
     next(err);
@@ -54,7 +63,7 @@ router.get("/login", (req, res) => {
   });
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -79,10 +88,20 @@ router.post("/login", async (req, res) => {
     const { accessToken, refreshToken } = generateTokens(existingUser);
     await addRefreshTokenToWhitelist({ refreshToken, userId: existingUser.id });
 
-    res.json({
-      accessToken,
-      refreshToken,
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 5 * 60 * 1000,
     });
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 30 * 24 * 60 * 60 * 1000, //30 days
+    });
+
+    return res.redirect("/dashboard");
   } catch (err) {
     next(err);
   }
@@ -90,7 +109,7 @@ router.post("/login", async (req, res) => {
 
 router.post("/refreshToken", async (req, res, next) => {
   try {
-    const { refreshToken } = req.body;
+    const { refreshToken } = req.cookies?.refreshToken;
     if (!refreshToken) {
       res.status(400);
       throw new Error("Missing refresh token");
@@ -118,13 +137,31 @@ router.post("/refreshToken", async (req, res, next) => {
       userId: user.id,
     });
 
-    res.json({
-      accessToken,
-      refreshToken: newRefreshToken,
+    // Reset cookies
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 5 * 60 * 1000,
     });
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.sendStatus(204);
   } catch (err) {
     next(err);
   }
+});
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("accessToken");
+  res.clearCookie("refreshToken");
+  res.sendStatus(204);
+  res.redirect("/login");
 });
 
 module.exports = router;
