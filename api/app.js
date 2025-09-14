@@ -30,7 +30,6 @@ passport.use(
         return done(null, user);
       } else {
         return done(null, false);
-        // or you could create a new account
       }
     } catch (err) {
       return done(err, false);

@@ -23,42 +23,19 @@ const {
 } = require("../prisma/queries");
 const { generateTokens } = require("../prisma/jwt");
 
-//signup
-// router.get("/signup", (req, res) => {
-//   res.render("signup", {
-//     title: "Sign-up",
-//   });
-// });
-
 router.post("/signup", async (req, res, next) => {
   try {
     const { email, name, password } = req.body;
     //hash password with bcryptjs
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await createUser(email, name, hashedPassword);
-    //const { accessToken, refreshToken } = generateTokens(user);
-    //await addRefreshTokenToWhitelist({ refreshToken, userId: user.id });
-    //res.cookie("accessToken", accessToken, {
-    //...baseCookie,
-    //maxAge: 5 * 60 * 1000,
-    //});
-    // res.cookie("refreshToken", refreshToken, {
-    //   ...baseCookie,
-    //   maxAge: 30 * 24 * 60 * 60 * 1000,
-    // });
+
     return res.status(201).json({ id: user.id, email: user.email });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
     next(err);
   }
 });
-
-//login
-// router.get("/login", (req, res) => {
-//   res.render("login", {
-//     title: "Login",
-//   });
-// });
 
 router.post("/login", async (req, res, next) => {
   try {
