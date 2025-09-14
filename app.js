@@ -59,8 +59,9 @@ app.use("/api/auth", authRouter);
 
 app.get("/api/me", authenticateWithRefresh, (req, res) => {
   res.json({
-    email: req.user.email,
     id: req.user.id,
+    email: req.user.email,
+    role: req.user.role,
   });
 });
 
