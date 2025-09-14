@@ -36,16 +36,16 @@ router.post("/signup", async (req, res, next) => {
     //hash password with bcryptjs
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await createUser(email, name, hashedPassword);
-    const { accessToken, refreshToken } = generateTokens(user);
-    await addRefreshTokenToWhitelist({ refreshToken, userId: user.id });
-    res.cookie("accessToken", accessToken, {
-      ...baseCookie,
-      maxAge: 5 * 60 * 1000,
-    });
-    res.cookie("refreshToken", refreshToken, {
-      ...baseCookie,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    //const { accessToken, refreshToken } = generateTokens(user);
+    //await addRefreshTokenToWhitelist({ refreshToken, userId: user.id });
+    //res.cookie("accessToken", accessToken, {
+    //...baseCookie,
+    //maxAge: 5 * 60 * 1000,
+    //});
+    // res.cookie("refreshToken", refreshToken, {
+    //   ...baseCookie,
+    //   maxAge: 30 * 24 * 60 * 60 * 1000,
+    // });
     return res.status(201).json({ id: user.id, email: user.email });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
