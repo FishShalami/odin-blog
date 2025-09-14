@@ -2,7 +2,6 @@ const express = require("express");
 require("dotenv").config();
 const app = express();
 const prisma = require("./prisma/client");
-
 const cookieParser = require("cookie-parser");
 
 //json web token
@@ -38,6 +37,8 @@ passport.use(
   })
 );
 
+const { authenticateWithRefresh } = require("./prisma/refreshToken");
+
 app.use(express.json()); // parse JSON body
 app.use(express.urlencoded({ extended: true })); // parse form data
 app.use(cookieParser());
@@ -58,31 +59,13 @@ app.get("/", async (req, res) => {
 
 app.use("/auth", authRouter);
 
-app.get(
-  "/dashboard",
-  (req, res, next) => {
-    fetch("/protected", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-      },
-    });
-    passport.authenticate("jwt", { session: false }, (err, user, info) => {
-      if (err) return next(err);
-      if (!user) {
-        // info can carry reasons like token expired, no auth header, etc.
-        return res.status(401).json({
-          error: "Unauthorized",
-          detail: info?.message || info || "No user from token",
-        });
-      }
-      req.user = user; // attach for the handler
-      next();
-    })(req, res, next);
-  },
-  async (req, res) => {
-    res.send(`Hello Secret World, ${req.user.email || req.user.id}`);
-  }
-);
+app.get("/dashboard", authenticateWithRefresh, (req, res) => {
+  res.render("dashboard", {
+    title: "Dashboard",
+    email: req.user.email,
+    id: req.user.id,
+  });
+});
 
 app.listen(3000, () => {
   console.log("Server listening on 3000!");

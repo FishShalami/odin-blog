@@ -33,23 +33,7 @@ router.post("/signup", async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await createUser(email, name, hashedPassword);
 
-    // const { accessToken, refreshToken } = generateTokens(user);
-    // await addRefreshTokenToWhitelist({ refreshToken, userId: user.id });
-
-    // res.cookie("accessToken", accessToken, {
-    //   httpOnly: true,
-    //   sameSite: "lax",
-    //   secure: process.env.NODE_ENV === "production",
-    //   maxAge: 5 * 60 * 1000, //5 minutes
-    // });
-    // res.cookie("refreshToken", refreshToken, {
-    //   httpOnly: true,
-    //   sameSite: "lax",
-    //   secure: process.env.NODE_ENV === "production",
-    //   maxAge: 30*24*60*60*1000, //30 days
-    // });
-
-    return res.redirect("/login");
+    return res.redirect("/auth/login");
   } catch (err) {
     res.status(500).send("Something went wrong");
     next(err);
@@ -107,61 +91,64 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-router.post("/refreshToken", async (req, res, next) => {
-  try {
-    const { refreshToken } = req.cookies?.refreshToken;
-    if (!refreshToken) {
-      res.status(400);
-      throw new Error("Missing refresh token");
-    }
-    const savedRefreshToken = await findRefreshToken(refreshToken);
+// router.post("/refreshToken", async (req, res, next) => {
+//   try {
+//     const { refreshToken } = req.cookies || {};
+//     if (!refreshToken) {
+//       res.status(400);
+//       throw new Error("Missing refresh token");
+//     }
+//     const savedRefreshToken = await findRefreshToken(refreshToken);
 
-    if (
-      !savedRefreshToken ||
-      savedRefreshToken.revoked === true ||
-      Date.now() >= savedRefreshToken.expireAt.getTime()
-    ) {
-      res.status(401);
-      throw new Error("Unauthorized");
-    }
-    const user = await findUserById(savedRefreshToken.userId);
-    if (!user) {
-      res.status(401);
-      throw new Error("Unauthorized");
-    }
+//     if (
+//       !savedRefreshToken ||
+//       savedRefreshToken.revoked === true ||
+//       Date.now() >= savedRefreshToken.expireAt.getTime()
+//     ) {
+//       res.status(401);
+//       throw new Error("Unauthorized");
+//     }
+//     const user = await findUserById(savedRefreshToken.userId);
+//     if (!user) {
+//       res.status(401);
+//       throw new Error("Unauthorized");
+//     }
 
-    await deleteRefreshTokenById(savedRefreshToken.id);
-    const { accessToken, refreshToken: newRefreshToken } = generateTokens(user);
-    await addRefreshTokenToWhitelist({
-      refreshToken: newRefreshToken,
-      userId: user.id,
-    });
+//     await deleteRefreshTokenById(savedRefreshToken.id);
+//     const { accessToken, refreshToken: newRefreshToken } = generateTokens(user);
+//     await addRefreshTokenToWhitelist({
+//       refreshToken: newRefreshToken,
+//       userId: user.id,
+//     });
 
-    // Reset cookies
-    res.cookie("accessToken", accessToken, {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 5 * 60 * 1000,
-    });
-    res.cookie("refreshToken", newRefreshToken, {
-      httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+//     // Reset cookies
+//     res.cookie("accessToken", accessToken, {
+//       httpOnly: true,
+//       sameSite: "lax",
+//       secure: process.env.NODE_ENV === "production",
+//       maxAge: 5 * 60 * 1000,
+//     });
+//     res.cookie("refreshToken", newRefreshToken, {
+//       httpOnly: true,
+//       sameSite: "lax",
+//       secure: process.env.NODE_ENV === "production",
+//       maxAge: 30 * 24 * 60 * 60 * 1000,
+//     });
 
-    return res.sendStatus(204);
-  } catch (err) {
-    next(err);
-  }
-});
+//     return res.sendStatus(204);
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-router.post("/logout", (req, res) => {
+const doLogout = (req, res) => {
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken");
-  res.sendStatus(204);
-  res.redirect("/login");
-});
+  //res.sendStatus(204);
+  return res.redirect("/auth/login");
+};
+
+router.get("/logout", doLogout);
+router.post("/logout", doLogout);
 
 module.exports = router;
