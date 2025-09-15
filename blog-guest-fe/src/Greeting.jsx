@@ -1,10 +1,13 @@
+import Button from "./components/Button";
+
 function Greeting() {
   return (
-    <h1>&quot;I swear by my pretty floral bonnet, I will end you.&quot;</h1>
+    <div>
+      <h1>Let's get started</h1>
+      <Button to="login" label="Login" />
+      <Button to="signup" label="Signup" />
+    </div>
   );
 }
 
-function Goodbye() {
-  return <h2>Goodbye, for now!</h2>;
-}
-export { Greeting, Goodbye };
+export default Greeting;

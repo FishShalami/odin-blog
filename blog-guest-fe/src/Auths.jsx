@@ -1,4 +1,5 @@
 import { React, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function SignupForm() {
   const [formData, setFormData] = useState({
@@ -6,6 +7,7 @@ function SignupForm() {
     name: "",
     password: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -29,6 +31,7 @@ function SignupForm() {
       if (response.ok) {
         const data = await response.json();
         alert("User created: " + JSON.stringify(data));
+        navigate("/login");
       } else {
         alert("Failed to create new user");
       }
@@ -64,6 +67,64 @@ function SignupForm() {
   );
 }
 
-// async function PostSignupFormData()
+function LoginForm() {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const navigate = useNavigate();
 
-export default SignupForm;
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  //handle form submission
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        alert("Welcome " + JSON.stringify(data.email));
+        navigate("/dashboard", { state: { user: data.user } });
+      } else {
+        alert("Login failed");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        name="email"
+        type="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+      />
+      <input
+        name="password"
+        type="password"
+        placeholder="Password"
+        value={formData.password}
+        onChange={handleChange}
+      />
+      <button type="submit">Login</button>
+    </form>
+  );
+}
+
+export { SignupForm, LoginForm };
