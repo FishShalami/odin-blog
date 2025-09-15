@@ -1,12 +1,12 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+// import { useState } from "react";
+// import reactLogo from "./assets/react.svg";
+// import viteLogo from "/vite.svg";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Routes
 import { SignupForm, LoginForm } from "./Auths";
-import DisplayDashboard from "./Dashboard";
+import { DisplayDashboard, PostsList } from "./Dashboard";
 import Greeting from "./Greeting";
 
 function App() {
@@ -16,7 +16,15 @@ function App() {
         <Route path="/" element={<Greeting />} />
         <Route path="/signup" element={<SignupForm />} />
         <Route path="/login" element={<LoginForm />} />
-        <Route path="/dashboard" element={<DisplayDashboard />} />
+        <Route
+          path="/dashboard"
+          element={
+            <>
+              <DisplayDashboard />
+              <PostsList />
+            </>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -1,6 +1,7 @@
 const prisma = require("./client");
 const { hashToken } = require("./hashToken");
 
+//--USERS
 async function getAllUsers() {
   return prisma.user.findMany({
     include: {
@@ -31,6 +32,18 @@ async function createUser(email, name, hashedPassword) {
       email: email,
       name: name,
       password: hashedPassword,
+    },
+  });
+}
+
+// --- POSTS
+async function getAllPosts() {
+  return prisma.post.findMany({
+    where: { published: true },
+    select: {
+      id: true,
+      title: true,
+      createdAt: true,
     },
   });
 }
@@ -91,4 +104,5 @@ module.exports = {
   findRefreshToken,
   deleteRefreshTokenById,
   revokeTokens,
+  getAllPosts,
 };

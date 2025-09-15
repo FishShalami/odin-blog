@@ -41,29 +41,32 @@ function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        name="name"
-        placeholder="Name"
-        value={formData.name}
-        onChange={handleChange}
-      />
-      <input
-        name="email"
-        type="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-      />
-      <input
-        name="password"
-        type="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-      />
-      <button type="submit">Create User</button>
-    </form>
+    <>
+      <h1>Sign-up</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          name="name"
+          placeholder="Name"
+          value={formData.name}
+          onChange={handleChange}
+        />
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+        />
+        <button type="submit">Create User</button>
+      </form>
+    </>
   );
 }
 
@@ -91,13 +94,12 @@ function LoginForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-        credentials: "include",
       });
 
       if (response.ok) {
         const data = await response.json();
         alert("Welcome " + JSON.stringify(data.email));
-        navigate("/dashboard", { state: { user: data.user } });
+        navigate("/dashboard");
       } else {
         alert("Login failed");
       }
@@ -107,23 +109,26 @@ function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        name="email"
-        type="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-      />
-      <input
-        name="password"
-        type="password"
-        placeholder="Password"
-        value={formData.password}
-        onChange={handleChange}
-      />
-      <button type="submit">Login</button>
-    </form>
+    <>
+      <h1>Login</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+        />
+        <button type="submit">Login</button>
+      </form>
+    </>
   );
 }
 

@@ -163,7 +163,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/dhume/repos/odin-blog/generated/prisma",
+      "value": "/Users/dhume/repos/odin-blog/api/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -177,7 +177,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/dhume/repos/odin-blog/prisma/schema.prisma",
+    "sourceFilePath": "/Users/dhume/repos/odin-blog/api/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -191,7 +191,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -200,22 +199,15 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Post {\n  id        Int      @id @default(autoincrement())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n  title     String\n  content   String?\n  published Boolean  @default(false)\n  author    User     @relation(fields: [authorId], references: [id])\n  authorId  Int\n}\n\nmodel Comment {\n  id        Int      @id @default(autoincrement())\n  content   String?\n  user      User     @relation(fields: [userId], references: [id])\n  userId    Int\n  createdAt DateTime @default(now())\n}\n\nmodel User {\n  id            Int            @id @default(autoincrement())\n  email         String         @unique\n  name          String?\n  posts         Post[]\n  comments      Comment[]\n  role          Role           @default(USER)\n  password      String\n  refreshTokens RefreshToken[]\n}\n\nmodel RefreshToken {\n  id          Int      @id @default(autoincrement())\n  hashedToken String   @unique\n  userId      Int\n  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  revoked     Boolean  @default(false)\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  expireAt    DateTime\n}\n\nenum Role {\n  USER\n  AUTHOR\n}\n",
-  "inlineSchemaHash": "2eb009bd969779a1177aec256fca1d06a827527eb2388a9b0b4da074eb7381d5",
-  "copyEngine": true
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Post {\n  id        Int       @id @default(autoincrement())\n  createdAt DateTime  @default(now())\n  updatedAt DateTime? @updatedAt\n  title     String\n  content   String?\n  published Boolean   @default(false)\n  author    User      @relation(fields: [authorId], references: [id])\n  authorId  Int\n}\n\nmodel Comment {\n  id        Int      @id @default(autoincrement())\n  content   String?\n  user      User     @relation(fields: [userId], references: [id])\n  userId    Int\n  createdAt DateTime @default(now())\n}\n\nmodel User {\n  id            Int            @id @default(autoincrement())\n  email         String         @unique\n  name          String?\n  posts         Post[]\n  comments      Comment[]\n  role          Role           @default(USER)\n  password      String\n  refreshTokens RefreshToken[]\n}\n\nmodel RefreshToken {\n  id          Int      @id @default(autoincrement())\n  hashedToken String   @unique\n  userId      Int\n  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)\n  revoked     Boolean  @default(false)\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  expireAt    DateTime\n}\n\nenum Role {\n  USER\n  AUTHOR\n}\n",
+  "inlineSchemaHash": "287448aa4f05c9e6586dd70f9a7c73265e74811279f05eb7abd8d92c2d196d74",
+  "copyEngine": false
 }
 config.dirname = '/'
 
 config.runtimeDataModel = JSON.parse("{\"models\":{\"Post\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"title\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"published\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"author\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"PostToUser\"},{\"name\":\"authorId\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null},\"Comment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CommentToUser\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"posts\",\"kind\":\"object\",\"type\":\"Post\",\"relationName\":\"PostToUser\"},{\"name\":\"comments\",\"kind\":\"object\",\"type\":\"Comment\",\"relationName\":\"CommentToUser\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"refreshTokens\",\"kind\":\"object\",\"type\":\"RefreshToken\",\"relationName\":\"RefreshTokenToUser\"}],\"dbName\":null},\"RefreshToken\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"hashedToken\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"RefreshTokenToUser\"},{\"name\":\"revoked\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"expireAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
-config.engineWasm = {
-  getRuntime: async () => require('./query_engine_bg.js'),
-  getQueryEngineWasmModule: async () => {
-    const loader = (await import('#wasm-engine-loader')).default
-    const engine = (await loader).default
-    return engine
-  }
-}
+config.engineWasm = undefined
 config.compilerWasm = undefined
 
 config.injectableEdgeEnv = () => ({

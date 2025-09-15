@@ -45,6 +45,7 @@ app.use(cookieParser());
 app.use(cors({ origin: process.env.FRONTEND_ORIGIN, credentials: true }));
 
 const authRouter = require("./routes/authRouter");
+const postsRouter = require("./routes/postsRouter");
 
 app.use(passport.initialize());
 
@@ -55,6 +56,7 @@ app.get("/", async (req, res) => {
 //--- ROUTERS ---
 
 app.use("/api/auth", authRouter);
+app.use("/api/posts", postsRouter);
 
 app.get("/api/me", authenticateWithRefresh, (req, res) => {
   res.json({
