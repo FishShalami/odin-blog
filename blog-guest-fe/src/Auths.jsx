@@ -1,5 +1,5 @@
-import { React, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { React, useEffect, useState } from "react";
+import { replace, useNavigate } from "react-router-dom";
 
 function SignupForm() {
   const [formData, setFormData] = useState({
@@ -77,6 +77,20 @@ function LoginForm() {
   });
   const navigate = useNavigate();
 
+  // 👇 If user already has valid cookies, skip login immediately
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/me", {
+          credentials: "include",
+        });
+        if (res.ok) {
+          navigate("/dashboard", { replace: true });
+        }
+      } catch {}
+    })();
+  }, [navigate]);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -90,16 +104,19 @@ function LoginForm() {
     e.preventDefault();
 
     try {
+      // if (request) contains refreshToken or accessToken, then redirect to the /dashboard
+
       const response = await fetch("http://localhost:3000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
 
       if (response.ok) {
         const data = await response.json();
-        alert("Welcome " + JSON.stringify(data.email));
-        navigate("/dashboard");
+        const user = data.user ?? data;
+        navigate("/dashboard", { state: { user } });
       } else {
         alert("Login failed");
       }

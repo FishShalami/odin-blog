@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function DisplayDashboard() {
-  const [user, setUser] = useState(null);
+  const { state } = useLocation();
+  const navigate = useNavigate();
+  const [user, setUser] = useState(state?.user ?? null);
 
   useEffect(() => {
+    if (user) return;
     (async () => {
       const res = await fetch("http://localhost:3000/api/me", {
         credentials: "include",
       });
       if (res.ok) {
         const data = await res.json();
-        setUser(data); //data has {id, email, role}
-      } else {
-        //redirect to /login on 401
+        setUser(data.user ?? data); //data has {id, email, role}
+      } else if (res.status === 401) {
+        navigate("/login", { replace: true });
       }
     })();
-  }, []);
+  }, [user, navigate]);
 
   return <h1>Hello {user?.email ?? "Secret World"}!</h1>;
 }
