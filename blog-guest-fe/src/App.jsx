@@ -5,7 +5,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Routes
-import { SignupForm, LoginForm } from "./Auths";
+import { SignupForm, LoginForm, LogoutButton } from "./Auths";
 import { DisplayDashboard, PostsList } from "./Dashboard";
 import Greeting from "./Greeting";
 
@@ -22,6 +22,7 @@ function App() {
             <>
               <DisplayDashboard />
               <PostsList />
+              <LogoutButton />
             </>
           }
         />

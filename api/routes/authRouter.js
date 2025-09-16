@@ -77,10 +77,21 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-router.post("/logout", (req, res) => {
-  res.clearCookie("accessToken");
-  res.clearCookie("refreshToken");
-  res.sendStatus(204);
+router.post("/logout", async (req, res, next) => {
+  try {
+    const rt = req.cookies?.refreshToken;
+    if (rt) {
+      const saved = await findRefreshToken(rt);
+      if (saved) {
+        await deleteRefreshTokenById(saved.id);
+      }
+    }
+    res.clearCookie("accessToken", baseCookie);
+    res.clearCookie("refreshToken", baseCookie);
+    res.status(200).json({ message: "You're logged out" });
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;

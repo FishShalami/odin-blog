@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from "react";
-import { replace, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function SignupForm() {
   const [formData, setFormData] = useState({
@@ -149,4 +149,16 @@ function LoginForm() {
   );
 }
 
-export { SignupForm, LoginForm };
+function LogoutButton() {
+  const navigate = useNavigate();
+  const onClick = async () => {
+    const response = await fetch("http://localhost:3000/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    if (response.ok) navigate("/login", { replace: true });
+  };
+  return <button onClick={onClick}>Logout</button>;
+}
+
+export { SignupForm, LoginForm, LogoutButton };
