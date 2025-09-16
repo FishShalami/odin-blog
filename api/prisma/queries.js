@@ -48,6 +48,24 @@ async function getAllPosts() {
   });
 }
 
+async function createPost(post_title, content, userId) {
+  return prisma.post.create({
+    data: {
+      title: post_title,
+      content: content,
+      authorId: userId,
+    },
+  });
+}
+
+async function findPostById(id) {
+  return prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+
 //--- AUTH TOKENs ----
 
 // used when we create a refresh token.
@@ -105,4 +123,6 @@ module.exports = {
   deleteRefreshTokenById,
   revokeTokens,
   getAllPosts,
+  createPost,
+  findPostById,
 };
