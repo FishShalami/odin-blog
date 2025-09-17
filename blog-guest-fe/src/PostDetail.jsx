@@ -28,6 +28,11 @@ export default function PostDetail() {
         <div>{post.content}</div>
       </article>
       <br />
+      <form action="/comments/new" method="post">
+        <label htmlFor="comment_content">Leave a comment: </label>
+        <textarea name="comment_content" id="comment_content"></textarea>
+      </form>
+      <br />
       <Button to="dashboard" label="Back to Dashboard" />
     </div>
   );
