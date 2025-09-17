@@ -43,12 +43,19 @@ function PostsList() {
     <ul>
       {posts.map((p) => (
         <li key={p.id}>
-          <h3>{p.title}</h3>
+          <h3>
+            <a href={`/posts/${p.id}`}>{p.title}</a>
+          </h3>
           <p>{p.createdAt}</p>
         </li>
       ))}
     </ul>
   );
+}
+
+function GoToPostId() {
+  const navigate = useNavigate();
+  //if user clicks on
 }
 
 export { DisplayDashboard, PostsList };

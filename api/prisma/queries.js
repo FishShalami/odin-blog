@@ -59,9 +59,9 @@ async function createPost(post_title, content, userId) {
 }
 
 async function findPostById(id) {
-  return prisma.user.findUnique({
+  return prisma.post.findUnique({
     where: {
-      id,
+      id: Number(id),
     },
   });
 }

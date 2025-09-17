@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { authenticateWithRefresh } = require("../prisma/refreshToken");
 
-const { getAllPosts, findUserById, createPost } = require("../prisma/queries");
+const { getAllPosts, findPostById, createPost } = require("../prisma/queries");
 
 router.get("/", authenticateWithRefresh, async (req, res) => {
   try {
@@ -28,6 +28,22 @@ router.post("/new", authenticateWithRefresh, async (req, res, next) => {
   } catch (err) {
     // res.status(500).json({ message: "Something went wrong" });
     return next(err);
+  }
+});
+
+router.get("/:id", authenticateWithRefresh, async (req, res, next) => {
+  try {
+    const postId = req.params.id;
+    const post = await findPostById(postId);
+    // console.log("Retreiving post with id: ", postId);
+    if (!post) {
+      return res.status(404).json({ Message: "Post not found" });
+    }
+    return res.json({
+      post,
+    });
+  } catch (err) {
+    next(err);
   }
 });
 
