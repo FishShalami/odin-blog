@@ -8,7 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SignupForm, LoginForm, LogoutButton } from "./Auths";
 import { DisplayDashboard, PostsList } from "./Dashboard";
 import Greeting from "./Greeting";
-import PostDetail from "./PostDetail";
+import { PostDetail, PostComments } from "./PostDetail";
 
 function App() {
   return (
@@ -27,7 +27,15 @@ function App() {
             </>
           }
         />
-        <Route path="/posts/:id" element={<PostDetail />} />
+        <Route
+          path="/posts/:id"
+          element={
+            <>
+              <PostDetail />
+              <PostComments />
+            </>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
