@@ -23,6 +23,7 @@ model Post {
   published Boolean   @default(false)
   author    User      @relation(fields: [authorId], references: [id])
   authorId  Int
+  comments  Comment[]
 }
 
 model Comment {
@@ -31,6 +32,11 @@ model Comment {
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
   createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Int
+
+  @@index([userId])
+  @@index([postId])
 }
 
 model User {

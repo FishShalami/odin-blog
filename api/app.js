@@ -46,6 +46,7 @@ app.use(cors({ origin: process.env.FRONTEND_ORIGIN, credentials: true }));
 
 const authRouter = require("./routes/authRouter");
 const postsRouter = require("./routes/postsRouter");
+const commentsRouter = require("./routes/commentsRouter");
 
 app.use(passport.initialize());
 
@@ -57,6 +58,7 @@ app.get("/", async (req, res) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/posts", postsRouter);
+app.use("/api/comments", commentsRouter);
 
 app.get("/api/me", authenticateWithRefresh, (req, res) => {
   res.json({

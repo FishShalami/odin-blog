@@ -66,6 +66,30 @@ async function findPostById(id) {
   });
 }
 
+// --- COMMENTS ----
+
+async function createComment(postId, userId, content) {
+  return prisma.comment.create({
+    data: {
+      content: content,
+      userId: userId,
+      postId: postId,
+    },
+  });
+}
+
+async function getPostComments(postId) {
+  return prisma.comment.findMany({
+    where: { postId: postId },
+    select: {
+      id: true,
+      content: true,
+      user: { select: { id: true, name: true } },
+      createdAt: true,
+    },
+  });
+}
+
 //--- AUTH TOKENs ----
 
 // used when we create a refresh token.
@@ -125,4 +149,5 @@ module.exports = {
   getAllPosts,
   createPost,
   findPostById,
+  createComment,
 };
