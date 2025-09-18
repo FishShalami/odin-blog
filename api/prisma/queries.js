@@ -150,4 +150,5 @@ module.exports = {
   createPost,
   findPostById,
   createComment,
+  getPostComments,
 };
