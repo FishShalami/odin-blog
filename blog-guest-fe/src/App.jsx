@@ -8,7 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SignupForm, LoginForm, LogoutButton } from "./Auths";
 import { DisplayDashboard, PostsList } from "./Dashboard";
 import Greeting from "./Greeting";
-import { PostDetail, PostComments } from "./PostDetail";
+import PostDetail from "./PostDetail";
 
 function App() {
   return (
@@ -32,7 +32,6 @@ function App() {
           element={
             <>
               <PostDetail />
-              <PostComments />
             </>
           }
         />

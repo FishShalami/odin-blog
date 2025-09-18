@@ -39,16 +39,28 @@ router.post("/new", authenticateWithRefresh, async (req, res, next) => {
 router.get("/:id", authenticateWithRefresh, async (req, res, next) => {
   try {
     const postId = Number(req.params.id);
-    const [post, comments] = await Promise.all([
-      findPostById(postId),
-      getPostComments(postId),
-    ]);
+    const post = await findPostById(postId);
     // console.log("Retreiving post with id: ", postId);
     if (!post) {
       return res.status(404).json({ Message: "Post not found" });
     }
     return res.json({
       post,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/:id/comments", authenticateWithRefresh, async (req, res, next) => {
+  try {
+    const postId = Number(req.params.id);
+    const comments = await getPostComments(postId);
+
+    if (!comments || comments.length === 0) {
+      return res.json({ comments: [] });
+    }
+    return res.json({
       comments,
     });
   } catch (err) {
