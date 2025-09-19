@@ -7,6 +7,7 @@ const {
   findPostById,
   createPost,
   getPostComments,
+  createComment,
 } = require("../prisma/queries");
 
 router.get("/", authenticateWithRefresh, async (req, res) => {
@@ -67,5 +68,29 @@ router.get("/:id/comments", authenticateWithRefresh, async (req, res, next) => {
     next(err);
   }
 });
+
+router.post(
+  "/:id/comments",
+  authenticateWithRefresh,
+  async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const postId = Number(req.params.id);
+      const { content } = req.body;
+
+      if (!Number.isInteger(postId)) {
+        return res.status(400).json({ message: "Invalid post id" });
+      }
+      if (!content || !content.trim()) {
+        return res.status(400).json({ message: "Content is required" });
+      }
+
+      const comment = await createComment(postId, userId, content);
+      return res.status(201).json({ comment });
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
 
 module.exports = router;

@@ -104,9 +104,10 @@ function CommentsSection({ postId }) {
         }
       );
       if (!res.ok) throw new Error("Failed to post comment");
-      const payload = await res.json();
-      const newComment = payload.comment ?? payload; // support either shape
-      setComments((prev) => [newComment, ...prev]); // newest first
+      const { comment } = await res.json();
+      if (!comment?.id)
+        throw new Error("Server did not return a comment with id");
+      setComments((prev) => [comment, ...prev]); // newest first
       return true;
     } catch (e) {
       console.error(e);
