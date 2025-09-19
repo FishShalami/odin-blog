@@ -42,7 +42,14 @@ const { authenticateWithRefresh } = require("./prisma/refreshToken");
 app.use(express.json()); // parse JSON body
 app.use(express.urlencoded({ extended: true })); // parse form data
 app.use(cookieParser());
-app.use(cors({ origin: process.env.FRONTEND_ORIGIN, credentials: true }));
+app.use(
+  cors({
+    origin: [process.env.FRONTEND_ORIGIN, process.env.AUTHOR_FE_ORIGIN].filter(
+      Boolean
+    ),
+    credentials: true,
+  })
+);
 
 const authRouter = require("./routes/authRouter");
 const postsRouter = require("./routes/postsRouter");
