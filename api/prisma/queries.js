@@ -66,6 +66,14 @@ async function findPostById(id) {
   });
 }
 
+async function deletePost(id) {
+  return prisma.post.delete({
+    where: {
+      id: Number(id),
+    },
+  });
+}
+
 // --- COMMENTS ----
 
 async function createComment(postId, userId, content) {
@@ -92,6 +100,14 @@ async function getPostComments(postId) {
       content: true,
       user: { select: { id: true, name: true } },
       createdAt: true,
+    },
+  });
+}
+
+async function deleteComment(id) {
+  return prisma.comment.delete({
+    where: {
+      id: Number(id),
     },
   });
 }
@@ -157,4 +173,6 @@ module.exports = {
   findPostById,
   createComment,
   getPostComments,
+  deletePost,
+  deleteComment,
 };

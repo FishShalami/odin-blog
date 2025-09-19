@@ -8,7 +8,11 @@ const {
   createPost,
   getPostComments,
   createComment,
+  deletePost,
+  deleteComment,
 } = require("../prisma/queries");
+
+const { requireAuthor } = require("../middlware/authorizeRoles");
 
 router.get("/", authenticateWithRefresh, async (req, res) => {
   try {
@@ -25,17 +29,40 @@ router.get("/", authenticateWithRefresh, async (req, res) => {
   }
 });
 
-router.post("/new", authenticateWithRefresh, async (req, res, next) => {
-  try {
-    const userId = req.user.id;
-    const { post_title, content } = req.body;
-    await createPost(post_title, content, userId);
-    return res.status(201).json({ post_title: post_title, posted_by: userId });
-  } catch (err) {
-    // res.status(500).json({ message: "Something went wrong" });
-    return next(err);
+router.post(
+  "/new",
+  authenticateWithRefresh,
+  requireAuthor,
+  async (req, res, next) => {
+    try {
+      const userId = req.user.id;
+      const { post_title, content } = req.body;
+      await createPost(post_title, content, userId);
+      return res
+        .status(201)
+        .json({ post_title: post_title, posted_by: userId });
+    } catch (err) {
+      // res.status(500).json({ message: "Something went wrong" });
+      return next(err);
+    }
   }
-});
+);
+
+router.post(
+  "/:id/delete",
+  authenticateWithRefresh,
+  requireAuthor,
+  async (req, res, next) => {
+    try {
+      const postId = req.params.id;
+      await deletePost(postId);
+      return res.status(201).json({ message: `deleted post id ${postId}` });
+    } catch (err) {
+      // res.status(500).json({ message: "Something went wrong" });
+      return next(err);
+    }
+  }
+);
 
 router.get("/:id", authenticateWithRefresh, async (req, res, next) => {
   try {
@@ -88,6 +115,26 @@ router.post(
       const comment = await createComment(postId, userId, content);
       return res.status(201).json({ comment });
     } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+//delete comment
+router.post(
+  "/:postId/comments/:commentId/delete",
+  authenticateWithRefresh,
+  requireAuthor,
+  async (req, res, next) => {
+    try {
+      const postId = req.params.postId;
+      const commentId = req.params.commentId;
+      await deleteComment(commentId);
+      return res
+        .status(201)
+        .json({ message: `deleted comment id ${commentId} on post ${postId}` });
+    } catch (err) {
+      // res.status(500).json({ message: "Something went wrong" });
       return next(err);
     }
   }
