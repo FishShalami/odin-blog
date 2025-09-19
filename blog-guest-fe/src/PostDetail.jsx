@@ -50,7 +50,7 @@ export default function PostDetail() {
       <br />
       {/* If your Button comp wraps a <Link>, keep using it.
           Otherwise a plain Link works fine: <Link to="/dashboard">Back</Link> */}
-      <Button to="/dashboard" label="Back to Dashboard" />
+      <Button to="dashboard" label="Back to Dashboard" />
     </div>
   );
 }
