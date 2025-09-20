@@ -53,9 +53,4 @@ function PostsList() {
   );
 }
 
-function GoToPostId() {
-  const navigate = useNavigate();
-  //if user clicks on
-}
-
 export { DisplayDashboard, PostsList };

@@ -71,7 +71,11 @@ router.post("/login", async (req, res, next) => {
       maxAge: 30 * 24 * 60 * 60 * 1000, //30 days
     });
 
-    return res.json({ id: existingUser.id, email: existingUser.email });
+    return res.json({
+      id: existingUser.id,
+      email: existingUser.email,
+      role: existingUser.role,
+    });
   } catch (err) {
     next(err);
   }

@@ -8,6 +8,8 @@ export default function PostDetail() {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Add delete button!
+
   useEffect(() => {
     let active = true;
     (async () => {

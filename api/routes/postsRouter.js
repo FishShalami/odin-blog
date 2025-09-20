@@ -48,6 +48,7 @@ router.post(
   }
 );
 
+//delete post
 router.post(
   "/:id/delete",
   authenticateWithRefresh,

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { authenticateWithRefresh } = require("../prisma/refreshToken");
 
-const { createComment } = require("../prisma/queries");
+const { createComment, deleteComment } = require("../prisma/queries");
 
 router.post("/new", authenticateWithRefresh, async (req, res, next) => {
   try {

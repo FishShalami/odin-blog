@@ -70,6 +70,23 @@ function SignupForm() {
   );
 }
 
+async function redirectAfterLogin(navigate) {
+  const res = await fetch("http://localhost:3000/api/me", {
+    credentials: "include",
+  });
+  if (!res.ok) {
+    alert("Login failed");
+    return;
+  }
+  const data = await res.json();
+  const user = data.user ?? data;
+  if (user.role === "AUTHOR") {
+    window.location.assign("http://localhost:5174/");
+  } else {
+    navigate("/dashboard", { state: { user } });
+  }
+}
+
 function LoginForm() {
   const [formData, setFormData] = useState({
     email: "",
@@ -85,7 +102,11 @@ function LoginForm() {
           credentials: "include",
         });
         if (res.ok) {
-          navigate("/dashboard", { replace: true });
+          const data = await res.json();
+          const user = data.user ?? data;
+          if (user.role === "AUTHOR")
+            window.location.assign("http://localhost:5174/");
+          else navigate("/dashboard", { replace: true });
         }
       } catch {}
     })();
@@ -116,9 +137,14 @@ function LoginForm() {
       if (response.ok) {
         const data = await response.json();
         const user = data.user ?? data;
-        navigate("/dashboard", { state: { user } });
-      } else {
-        alert("Login failed");
+        if (user.role === "AUTHOR") {
+          window.location.assign("http://localhost:5174/");
+        } else if (user.role === "USER") {
+          navigate("/dashboard", { state: { user } });
+        } else {
+          console.log("Unexpected login payload:", data);
+          alert("Login failed");
+        }
       }
     } catch (error) {
       console.error("Error:", error);

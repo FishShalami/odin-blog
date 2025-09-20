@@ -1,43 +1,45 @@
-// import { useState } from "react";
-// import reactLogo from "./assets/react.svg";
-// import viteLogo from "/vite.svg";
-import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+} from "react-router-dom";
+import { useAuth } from "./useAuth";
+import RequireAuthor from "./components/RequireAuthor";
+import AuthorDashboard from "./pages/AuthorDashboard";
+import NewPost from "./pages/NewPost";
+import PostComments from "./pages/PostComments";
+import { api } from "./api";
 
-// Routes
-import { SignupForm, LoginForm, LogoutButton } from "./Auths";
-import { DisplayDashboard, PostsList } from "./Dashboard";
-import Greeting from "./Greeting";
-import PostDetail from "./PostDetail";
-
-function App() {
+function Shell() {
+  const navigate = useNavigate();
+  async function handleLogout() {
+    await api("/api/auth/logout", { method: "POST" });
+    navigate(0);
+  }
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Greeting />} />
-        <Route path="/signup" element={<SignupForm />} />
-        <Route path="/login" element={<LoginForm />} />
-        <Route
-          path="/dashboard"
-          element={
-            <>
-              <DisplayDashboard />
-              <PostsList />
-              <LogoutButton />
-            </>
-          }
-        />
-        <Route
-          path="/posts/:id"
-          element={
-            <>
-              <PostDetail />
-            </>
-          }
-        />
-      </Routes>
-    </BrowserRouter>
+    <header style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+      <Link to="/">Dashboard</Link>
+      <Link to="/posts/new">New Post</Link>
+      <button onClick={handleLogout}>Logout</button>
+    </header>
   );
 }
 
-export default App;
+export default function App() {
+  const { user, loading } = useAuth();
+
+  return (
+    <BrowserRouter>
+      <RequireAuthor user={user} loading={loading}>
+        <Shell />
+        <Routes>
+          <Route path="/" element={<AuthorDashboard />} />
+          <Route path="/posts/new" element={<NewPost />} />
+          <Route path="/posts/:id/comments" element={<PostComments />} />
+        </Routes>
+      </RequireAuthor>
+    </BrowserRouter>
+  );
+}
