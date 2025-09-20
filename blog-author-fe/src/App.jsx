@@ -13,10 +13,10 @@ import PostComments from "./pages/PostComments";
 import { api } from "./api";
 
 function Shell() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   async function handleLogout() {
     await api("/api/auth/logout", { method: "POST" });
-    navigate(0);
+    window.location.href = "http://localhost:5173/";
   }
   return (
     <header style={{ display: "flex", gap: 12, marginBottom: 16 }}>
