@@ -10,6 +10,8 @@ import RequireAuthor from "./components/RequireAuthor";
 import AuthorDashboard from "./pages/AuthorDashboard";
 import NewPost from "./pages/NewPost";
 import PostComments from "./pages/PostComments";
+import PostUpdate from "./pages/PostUpdate";
+
 import { api } from "./api";
 
 function Shell() {
@@ -38,6 +40,7 @@ export default function App() {
           <Route path="/" element={<AuthorDashboard />} />
           <Route path="/posts/new" element={<NewPost />} />
           <Route path="/posts/:id/comments" element={<PostComments />} />
+          <Route path="/posts/:id/update" element={<PostUpdate />} />
         </Routes>
       </RequireAuthor>
     </BrowserRouter>

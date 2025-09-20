@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api";
 
 export default function AuthorDashboard() {
   const [posts, setPosts] = useState([]);
+  const navigate = useNavigate();
 
   async function load() {
     const res = await api("/api/posts");
@@ -23,6 +24,10 @@ export default function AuthorDashboard() {
     else alert("Failed to delete post");
   }
 
+  async function handleUpdate(id) {
+    navigate(`/posts/${id}/update`);
+  }
+
   return (
     <div>
       <h1> Posts</h1>
@@ -32,6 +37,7 @@ export default function AuthorDashboard() {
           <li key={p.id} style={{ marginBottom: 8 }}>
             <b>{p.title}</b>{" "}
             <Link to={`/posts/${p.id}/comments`}>Manage comments</Link>{" "}
+            <button onClick={() => handleUpdate(p.id)}>Update Post</button>
             <button onClick={() => handleDelete(p.id)}>Delete</button>
           </li>
         ))}

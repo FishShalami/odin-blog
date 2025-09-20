@@ -73,6 +73,43 @@ router.post(
   }
 );
 
+router.get(
+  "/:id/update",
+  authenticateWithRefresh,
+  requireAuthor,
+  async (req, res, next) => {
+    try {
+      const postId = Number(req.params.id);
+      const post = await findPostById(postId);
+      // console.log("Retreiving post with id: ", postId);
+      if (!post) {
+        return res.status(404).json({ Message: "Post not found" });
+      }
+      return res.json({
+        post,
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+router.put(
+  "/:id/update",
+  authenticateWithRefresh,
+  requireAuthor,
+  async (req, res, next) => {
+    try {
+      const id = Number(req.params.id);
+      const { title, content } = req.body;
+      const post = await updatePost({ id, title, content });
+      res.json({ post });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 router.get("/:id", authenticateWithRefresh, async (req, res, next) => {
   try {
     const postId = Number(req.params.id);
