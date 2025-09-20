@@ -4,6 +4,7 @@ const { authenticateWithRefresh } = require("../prisma/refreshToken");
 
 const {
   getAllPosts,
+  getPublishedPosts,
   findPostById,
   createPost,
   getPostComments,
@@ -16,7 +17,14 @@ const { requireAuthor } = require("../middlware/authorizeRoles");
 
 router.get("/", authenticateWithRefresh, async (req, res) => {
   try {
-    const posts = await getAllPosts();
+    let posts;
+    //if author, then return All posts published and unpublished
+    if (req.user.role === "AUTHOR") {
+      posts = await getAllPosts();
+    } else {
+      //if not author then return only published posts
+      posts = await getPublishedPosts();
+    }
     if (!posts || posts.length === 0) {
       return res.json({ posts: [] });
     }

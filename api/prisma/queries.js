@@ -39,11 +39,25 @@ async function createUser(email, name, hashedPassword) {
 // --- POSTS
 async function getAllPosts() {
   return prisma.post.findMany({
+    select: {
+      id: true,
+      title: true,
+      createdAt: true,
+      published: true,
+      // authorId: { select: { id: true, name: true } },
+    },
+  });
+}
+
+async function getPublishedPosts() {
+  return prisma.post.findMany({
     where: { published: true },
     select: {
       id: true,
       title: true,
       createdAt: true,
+      published: true,
+      // authorId: { select: { id: true, name: true } },
     },
   });
 }
@@ -169,6 +183,7 @@ module.exports = {
   deleteRefreshTokenById,
   revokeTokens,
   getAllPosts,
+  getPublishedPosts,
   createPost,
   findPostById,
   createComment,
