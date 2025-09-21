@@ -12,6 +12,7 @@ const {
   deletePost,
   deleteComment,
   updatePost,
+  setPostPublishedStatus,
 } = require("../prisma/queries");
 
 const { requireAuthor } = require("../middlware/authorizeRoles");
@@ -53,6 +54,29 @@ router.post(
     } catch (err) {
       // res.status(500).json({ message: "Something went wrong" });
       return next(err);
+    }
+  }
+);
+
+router.post(
+  "/:id/publish",
+  authenticateWithRefresh,
+  requireAuthor,
+  async (req, res, next) => {
+    try {
+      const postId = Number(req.params.id);
+      if (!Number.isInteger(postId)) {
+        return res.status(400).json({ error: "Invalid post id" });
+      }
+      const { published } = req.body;
+      if (typeof published !== "boolean") {
+        return res.status(400).json({ error: "`published` must be a boolean" });
+      }
+
+      const post = await setPostPublishedStatus({ id: postId, published });
+      return res.status(200).json({ post });
+    } catch (err) {
+      next(err);
     }
   }
 );

@@ -29,11 +29,27 @@ export default function AuthorDashboard() {
     navigate(`/posts/${id}/update`);
   }
 
-  function handlePublishValue(bool) {
-    if (bool) {
-      return "Published";
-    } else {
-      return "Draft";
+  async function handleTogglePublished(id, currentValue) {
+    try {
+      const res = await api(`/api/posts/${id}/publish`, {
+        method: "POST",
+        body: { published: !currentValue },
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || "Failed to change publication status");
+      }
+
+      // backend returns { post }
+      const { post } = await res.json();
+
+      // Update the one post in local state
+      setPosts((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, ...post } : p))
+      );
+    } catch (err) {
+      alert(err.message || "Failed to change publication status");
     }
   }
 
@@ -46,7 +62,18 @@ export default function AuthorDashboard() {
           <li key={p.id} className="post-card">
             <b>{p.title}</b>{" "}
             <i>{`(Created on ${FriendlyDate(p.createdAt)})`}</i>{" "}
-            <p>{`Status: ${handlePublishValue(p.published)}`}</p>
+            <p>{`Status: ${p.published ? "Published" : "Draft"}`}</p>
+            <label className="toggle">
+              <input
+                type="checkbox"
+                checked={p.published}
+                onChange={() => handleTogglePublished(p.id, p.published)}
+              />
+              <span className="toggle-slider" />
+              <span className="toggle-label">
+                {p.published ? "Published" : "Draft"}
+              </span>
+            </label>
             <Link to={`/posts/${p.id}/comments`}>Manage comments</Link> <br />
             <button onClick={() => handleUpdate(p.id)}>Update Post</button>
             <i>{`(Updated on ${FriendlyDate(p.updatedAt)})`}</i> <br />

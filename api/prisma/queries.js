@@ -50,6 +50,20 @@ async function getAllPosts() {
   });
 }
 
+async function setPostPublishedStatus({ id, published }) {
+  return prisma.post.update({
+    where: { id: Number(id) },
+    data: { published },
+    select: {
+      id: true,
+      title: true,
+      createdAt: true,
+      updatedAt: true,
+      published: true,
+    },
+  });
+}
+
 async function getPublishedPosts() {
   return prisma.post.findMany({
     where: { published: true },
@@ -202,4 +216,5 @@ module.exports = {
   getPostComments,
   deletePost,
   deleteComment,
+  setPostPublishedStatus,
 };
