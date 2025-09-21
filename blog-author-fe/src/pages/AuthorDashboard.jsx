@@ -29,6 +29,14 @@ export default function AuthorDashboard() {
     navigate(`/posts/${id}/update`);
   }
 
+  function handlePublishValue(bool) {
+    if (bool) {
+      return "Published";
+    } else {
+      return "Draft";
+    }
+  }
+
   return (
     <div>
       <h1> Posts</h1>
@@ -38,6 +46,7 @@ export default function AuthorDashboard() {
           <li key={p.id} className="post-card">
             <b>{p.title}</b>{" "}
             <i>{`(Created on ${FriendlyDate(p.createdAt)})`}</i>{" "}
+            <p>{`Status: ${handlePublishValue(p.published)}`}</p>
             <Link to={`/posts/${p.id}/comments`}>Manage comments</Link> <br />
             <button onClick={() => handleUpdate(p.id)}>Update Post</button>
             <i>{`(Updated on ${FriendlyDate(p.updatedAt)})`}</i> <br />
