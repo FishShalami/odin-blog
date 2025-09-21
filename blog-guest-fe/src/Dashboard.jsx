@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import FriendlyDate from "./components/FriendlyDate";
+import { api } from "./api";
 
 function DisplayDashboard() {
   const { state } = useLocation();
@@ -10,9 +11,7 @@ function DisplayDashboard() {
   useEffect(() => {
     if (user) return;
     (async () => {
-      const res = await fetch("http://localhost:3000/api/me", {
-        credentials: "include",
-      });
+      const res = await api("/api/me");
       if (res.ok) {
         const data = await res.json();
         setUser(data.user ?? data); //data has {id, email, role}
@@ -30,9 +29,7 @@ function PostsList() {
 
   useEffect(() => {
     (async () => {
-      const res = await fetch("http://localhost:3000/api/posts", {
-        credentials: "include",
-      });
+      const res = await api("/api/posts");
       if (res.ok) {
         const data = await res.json();
         setPosts(data.posts);

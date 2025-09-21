@@ -1,6 +1,7 @@
 // PostDetail.jsx
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { api } from "../api";
 
 export default function PostUpdate() {
   const { id } = useParams();
@@ -21,9 +22,7 @@ export default function PostUpdate() {
     let active = true;
     (async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/posts/${id}`, {
-          credentials: "include",
-        });
+        const res = await api(`/api/posts/${id}`);
         if (!res.ok) throw new Error("Failed to load post");
         const data = await res.json();
         const p = data.post ?? data;
@@ -57,11 +56,9 @@ export default function PostUpdate() {
     setError("");
 
     try {
-      const res = await fetch(`http://localhost:3000/api/posts/${id}`, {
+      const res = await api(`/api/posts/${id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(formData),
+        body: formData,
       });
       if (!res.ok) {
         const msg =

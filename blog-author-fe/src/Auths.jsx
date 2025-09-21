@@ -1,5 +1,6 @@
 import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "./api";
 
 function SignupForm() {
   const [formData, setFormData] = useState({
@@ -22,10 +23,9 @@ function SignupForm() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/signup", {
+      const response = await api("/api/auth/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: formData,
       });
 
       if (response.ok) {
@@ -81,9 +81,7 @@ function LoginForm() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/me", {
-          credentials: "include",
-        });
+        const res = await api("/api/me");
         if (res.ok) {
           navigate("/dashboard", { replace: true });
         }
@@ -106,11 +104,9 @@ function LoginForm() {
     try {
       // if (request) contains refreshToken or accessToken, then redirect to the /dashboard
 
-      const response = await fetch("http://localhost:3000/api/auth/login", {
+      const response = await api("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-        credentials: "include",
+        body: formData,
       });
 
       if (response.ok) {
@@ -152,10 +148,7 @@ function LoginForm() {
 function LogoutButton() {
   const navigate = useNavigate();
   const onClick = async () => {
-    const response = await fetch("http://localhost:3000/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+    const response = await api("/api/auth/logout", { method: "POST" });
     if (response.ok) navigate("/login", { replace: true });
   };
   return <button onClick={onClick}>Logout</button>;

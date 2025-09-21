@@ -2,6 +2,7 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Button from "./components/Button";
+import { api } from "./api";
 
 export default function PostDetail() {
   const { id } = useParams();
@@ -14,9 +15,7 @@ export default function PostDetail() {
     let active = true;
     (async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/posts/${id}`, {
-          credentials: "include",
-        });
+        const res = await api(`/api/posts/${id}`);
         if (!res.ok) throw new Error("Failed to load post");
         const data = await res.json();
         if (active) {
@@ -69,12 +68,7 @@ function CommentsSection({ postId }) {
     (async () => {
       try {
         // Prefer a dedicated route: /api/posts/:id/comments
-        const res = await fetch(
-          `http://localhost:3000/api/posts/${postId}/comments`,
-          {
-            credentials: "include",
-          }
-        );
+        const res = await api(`/api/posts/${postId}/comments`);
         if (!res.ok) throw new Error("Failed to load comments");
         const data = await res.json();
         if (active) {
@@ -96,15 +90,10 @@ function CommentsSection({ postId }) {
 
   async function handleAddComment(content) {
     try {
-      const res = await fetch(
-        `http://localhost:3000/api/posts/${postId}/comments`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ content }),
-        }
-      );
+      const res = await api(`/api/posts/${postId}/comments`, {
+        method: "POST",
+        body: { content },
+      });
       if (!res.ok) throw new Error("Failed to post comment");
       const { comment } = await res.json();
       if (!comment?.id)

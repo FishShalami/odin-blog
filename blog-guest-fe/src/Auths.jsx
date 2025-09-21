@@ -1,5 +1,7 @@
 import { React, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "./api";
+import { AUTHOR_APP_URL } from "./config";
 
 function SignupForm() {
   const [formData, setFormData] = useState({
@@ -22,10 +24,9 @@ function SignupForm() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/signup", {
+      const response = await api("/api/auth/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: formData,
       });
 
       if (response.ok) {
@@ -71,9 +72,7 @@ function SignupForm() {
 }
 
 async function redirectAfterLogin(navigate) {
-  const res = await fetch("http://localhost:3000/api/me", {
-    credentials: "include",
-  });
+  const res = await api("/api/me");
   if (!res.ok) {
     alert("Login failed");
     return;
@@ -81,7 +80,7 @@ async function redirectAfterLogin(navigate) {
   const data = await res.json();
   const user = data.user ?? data;
   if (user.role === "AUTHOR") {
-    window.location.assign("http://localhost:5174/");
+    window.location.assign(AUTHOR_APP_URL);
   } else {
     navigate("/dashboard", { state: { user } });
   }
@@ -98,14 +97,12 @@ function LoginForm() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/me", {
-          credentials: "include",
-        });
+        const res = await api("/api/me");
         if (res.ok) {
           const data = await res.json();
           const user = data.user ?? data;
           if (user.role === "AUTHOR")
-            window.location.assign("http://localhost:5174/");
+            window.location.assign(AUTHOR_APP_URL);
           else navigate("/dashboard", { replace: true });
         }
       } catch {}
@@ -127,18 +124,16 @@ function LoginForm() {
     try {
       // if (request) contains refreshToken or accessToken, then redirect to the /dashboard
 
-      const response = await fetch("http://localhost:3000/api/auth/login", {
+      const response = await api("/api/auth/login", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-        credentials: "include",
+        body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
         const user = data.user ?? data;
         if (user.role === "AUTHOR") {
-          window.location.assign("http://localhost:5174/");
+          window.location.assign(AUTHOR_APP_URL);
         } else if (user.role === "USER") {
           navigate("/dashboard", { state: { user } });
         } else {
@@ -178,10 +173,7 @@ function LoginForm() {
 function LogoutButton() {
   const navigate = useNavigate();
   const onClick = async () => {
-    const response = await fetch("http://localhost:3000/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+    const response = await api("/api/auth/logout", { method: "POST" });
     if (response.ok) navigate("/login", { replace: true });
   };
   return <button onClick={onClick}>Logout</button>;

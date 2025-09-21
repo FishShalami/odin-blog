@@ -7,12 +7,13 @@ import PostComments from "./pages/PostComments";
 import PostUpdate from "./pages/PostUpdate";
 
 import { api } from "./api";
+import { GUEST_APP_URL } from "./config";
 
 function Shell() {
   // const navigate = useNavigate();
   async function handleLogout() {
     await api("/api/auth/logout", { method: "POST" });
-    window.location.href = "http://localhost:5173/";
+    window.location.href = GUEST_APP_URL;
   }
   return (
     <header>
