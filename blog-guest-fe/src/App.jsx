@@ -10,9 +10,18 @@ import { DisplayDashboard, PostsList } from "./Dashboard";
 import Greeting from "./Greeting";
 import PostDetail from "./PostDetail";
 
+function Shell() {
+  return (
+    <header>
+      <LogoutButton />
+    </header>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
+      <Shell />
       <Routes>
         <Route path="/" element={<Greeting />} />
         <Route path="/signup" element={<SignupForm />} />
@@ -23,7 +32,6 @@ function App() {
             <>
               <DisplayDashboard />
               <PostsList />
-              <LogoutButton />
             </>
           }
         />

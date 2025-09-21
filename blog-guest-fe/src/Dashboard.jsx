@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import FriendlyDate from "./components/FriendlyDate";
 
 function DisplayDashboard() {
   const { state } = useLocation();
@@ -40,13 +41,13 @@ function PostsList() {
   }, []);
 
   return (
-    <ul>
+    <ul className="post-container">
       {posts.map((p) => (
-        <li key={p.id}>
+        <li key={p.id} className="post-card">
           <h3>
             <a href={`/posts/${p.id}`}>{p.title}</a>
           </h3>
-          <p>{p.createdAt}</p>
+          <i>{`(Created on ${FriendlyDate(p.createdAt)})`}</i>
         </li>
       ))}
     </ul>

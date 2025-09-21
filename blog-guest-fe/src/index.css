@@ -13,6 +13,19 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  max-width: none; /* remove the cap */
+  margin: 0; /* no auto-centering */
+  padding: 0; /* remove inner padding */
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -25,14 +38,15 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
+  /* place-items: center; */
+  width: 100%;
   min-height: 100vh;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  margin-left: 12px;
 }
 
 button {
@@ -58,6 +72,73 @@ ul {
   list-style: none;
 }
 
+.post-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  padding: 24px 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.post-card {
+  /* keep your visual styles; no width needed */
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border: 2px solid #261d1d;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  color: black;
+}
+
+.post-card > button:last-of-type {
+  background-color: red;
+}
+
+header {
+  margin-left: 0;
+  padding: 12px 12px;
+  display: flex;
+  flex: auto;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+  background-color: #213547;
+}
+
+header > button {
+  background-color: #67696a;
+  color: white;
+  margin-left: auto;
+}
+header > button:hover {
+  background-color: #d63ba0;
+  color: white;
+  margin-left: auto;
+}
+
+.comment-section {
+  background-color: black;
+  padding: 24px;
+}
+
+article {
+  background-color: white;
+  color: black;
+  padding: 24px;
+}
+
+article > h1 {
+  text-align: center;
+}
+
+article > p {
+  text-align: center;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -67,6 +148,7 @@ ul {
     color: #747bff;
   }
   button {
-    background-color: #f9f9f9;
+    background-color: #64a1ca;
+    margin: 0 12px;
   }
 }

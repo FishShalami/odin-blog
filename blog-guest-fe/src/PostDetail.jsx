@@ -119,7 +119,7 @@ function CommentsSection({ postId }) {
   }
 
   return (
-    <section>
+    <section className="comment-section">
       <h2>Comments</h2>
       <CommentForm onSubmit={handleAddComment} />
       {loading && <p>Loading comments…</p>}
