@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api";
+import FriendlyDate from "../components/FriendlyDate";
 
 export default function AuthorDashboard() {
   const [posts, setPosts] = useState([]);
@@ -36,8 +37,10 @@ export default function AuthorDashboard() {
         {posts.map((p) => (
           <li key={p.id} style={{ marginBottom: 8 }}>
             <b>{p.title}</b>{" "}
+            <i>{`(Created on ${FriendlyDate(p.createdAt)})`}</i>{" "}
             <Link to={`/posts/${p.id}/comments`}>Manage comments</Link>{" "}
             <button onClick={() => handleUpdate(p.id)}>Update Post</button>
+            <i>{`(Updated on ${FriendlyDate(p.updatedAt)})`}</i>{" "}
             <button onClick={() => handleDelete(p.id)}>Delete</button>
           </li>
         ))}

@@ -11,6 +11,7 @@ const {
   createComment,
   deletePost,
   deleteComment,
+  updatePost,
 } = require("../prisma/queries");
 
 const { requireAuthor } = require("../middlware/authorizeRoles");
@@ -95,7 +96,7 @@ router.get(
 );
 
 router.put(
-  "/:id/update",
+  "/:id",
   authenticateWithRefresh,
   requireAuthor,
   async (req, res, next) => {
@@ -105,7 +106,11 @@ router.put(
       const post = await updatePost({ id, title, content });
       res.json({ post });
     } catch (err) {
-      next(err);
+      if (err.code === "P2025") {
+        return res.status(404).json({ message: "Post not found" });
+      }
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
     }
   }
 );

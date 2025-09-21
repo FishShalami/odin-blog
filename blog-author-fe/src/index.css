@@ -67,6 +67,28 @@ ul {
     color: #747bff;
   }
   button {
-    background-color: #f9f9f9;
+    background-color: #64a1ca;
+    margin: 0 12px;
+  }
+
+  header {
+    margin-left: 0;
+    padding: 12px 12px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+    background-color: #213547;
+  }
+
+  header > button {
+    background-color: #67696a;
+    color: white;
+    margin-left: auto;
+  }
+  header > button:hover {
+    background-color: #d63ba0;
+    color: white;
+    margin-left: auto;
   }
 }

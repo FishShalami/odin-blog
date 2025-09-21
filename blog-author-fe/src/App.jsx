@@ -1,10 +1,4 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Link,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { useAuth } from "./useAuth";
 import RequireAuthor from "./components/RequireAuthor";
 import AuthorDashboard from "./pages/AuthorDashboard";
@@ -21,7 +15,7 @@ function Shell() {
     window.location.href = "http://localhost:5173/";
   }
   return (
-    <header style={{ display: "flex", gap: 12, marginBottom: 16 }}>
+    <header>
       <Link to="/">Dashboard</Link>
       <Link to="/posts/new">New Post</Link>
       <button onClick={handleLogout}>Logout</button>

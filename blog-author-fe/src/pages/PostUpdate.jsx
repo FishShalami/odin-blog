@@ -1,7 +1,6 @@
 // PostDetail.jsx
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Button from "../components/Button";
 
 export default function PostUpdate() {
   const { id } = useParams();
@@ -70,7 +69,7 @@ export default function PostUpdate() {
         throw new Error(msg);
       }
       // Navigate back or show a success state
-      navigate("/dashboard"); // or navigate(`/posts/${id}`)
+      navigate("/"); // or navigate(`/posts/${id}`)
     } catch (e) {
       console.error(e);
       setError(e.message || "Error updating post");
@@ -116,7 +115,7 @@ export default function PostUpdate() {
         <button type="submit" disabled={saving}>
           {saving ? "Updating…" : "Update Post"}
         </button>
-        <Link to="/dashboard" style={{ marginLeft: 12 }}>
+        <Link to="/" style={{ marginLeft: 12 }}>
           Cancel
         </Link>
       </form>

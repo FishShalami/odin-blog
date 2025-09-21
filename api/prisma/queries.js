@@ -43,6 +43,7 @@ async function getAllPosts() {
       id: true,
       title: true,
       createdAt: true,
+      updatedAt: true,
       published: true,
       // authorId: { select: { id: true, name: true } },
     },
@@ -68,6 +69,16 @@ async function createPost(post_title, content, userId) {
       title: post_title,
       content: content,
       authorId: userId,
+    },
+  });
+}
+
+async function updatePost({ id, post_title, content }) {
+  return prisma.post.update({
+    where: { id: Number(id) },
+    data: {
+      title: post_title,
+      content: content,
     },
   });
 }
@@ -185,6 +196,7 @@ module.exports = {
   getAllPosts,
   getPublishedPosts,
   createPost,
+  updatePost,
   findPostById,
   createComment,
   getPostComments,
