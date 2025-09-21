@@ -33,14 +33,14 @@ export default function AuthorDashboard() {
     <div>
       <h1> Posts</h1>
       {!posts.length && <p>No posts yet.</p>}
-      <ul>
+      <ul className="post-container">
         {posts.map((p) => (
-          <li key={p.id} style={{ marginBottom: 8 }}>
+          <li key={p.id} className="post-card">
             <b>{p.title}</b>{" "}
             <i>{`(Created on ${FriendlyDate(p.createdAt)})`}</i>{" "}
-            <Link to={`/posts/${p.id}/comments`}>Manage comments</Link>{" "}
+            <Link to={`/posts/${p.id}/comments`}>Manage comments</Link> <br />
             <button onClick={() => handleUpdate(p.id)}>Update Post</button>
-            <i>{`(Updated on ${FriendlyDate(p.updatedAt)})`}</i>{" "}
+            <i>{`(Updated on ${FriendlyDate(p.updatedAt)})`}</i> <br />
             <button onClick={() => handleDelete(p.id)}>Delete</button>
           </li>
         ))}
